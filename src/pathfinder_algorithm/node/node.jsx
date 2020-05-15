@@ -11,7 +11,8 @@ class Node extends React.Component {
         const {
             col,
             isFinish,
-            isStart, 
+            isStart,
+            // isVisited, 
             isWall, 
             onMouseDown, 
             onMouseEnter,
@@ -33,9 +34,9 @@ class Node extends React.Component {
             <div 
                 id={`node-${row}-${col}`}
                 className={`node ${extraClassName}`}
-                // onMouseDown={() => onMouseDown(row, col)}
-                // onMouseEnter={() => onMouseEnter(row, col)}
-                // onMouseUp={() => onMouseUp()}
+                onMouseDown={() => onMouseDown(row, col)}
+                onMouseEnter={() => onMouseEnter(row, col)}
+                onMouseUp={() => onMouseUp()}
             >
 
             </div>

@@ -35,30 +35,46 @@ const createNode = (col, row) => {
     };
 };
 
-// const getNewGridWithWallToggled = (grid, row, col) => {
-//     const newGrid = grid.slice();
-//     const node = newGrid[row][col];
-//     const newNode = {
-//         ...node, 
-//         isVisited: true,
-//         // isWall:!node.isWall,
-//     };
-//     newGrid[row][col] = newNode;
-//     return newGrid;
-// };
+const getNewGridWithWallToggled = (grid, row, col) => {
+    const newGrid = grid.slice();
+    const node = newGrid[row][col];
+    const newNode = {
+        ...node, 
+        isVisited: true,
+        isWall: !node.isWall,
+    };
+    newGrid[row][col] = newNode;
+    return newGrid;
+};
 
 class Pathfinder extends React.Component {
     constructor() {
         // super(props);
         super();
         this.state = {
-            grid: []
+            grid: [],
+            mouseIsPressed: false,
         };
     };
 
     componentDidMount() {
         const grid = getInitialGrid();
         this.setState({ grid });
+    }
+
+    handleMouseDown(row, col) {
+        const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
+        this.setState({ grid: newGrid, mouseIsPressed: true });
+    }
+
+    handleMouseUp() {
+        this.setState({ mouseIsPressed: false });
+    }
+
+    handleMouseEnter(row, col) {
+        if (!this.state.mouseIsPressed) return;
+        const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
+        this.setState({ grid: newGrid });
     }
 
     animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder) {
@@ -109,7 +125,7 @@ class Pathfinder extends React.Component {
     }
 
     render() {
-        const { grid } = this.state;
+        const { grid, mouseIsPressed } = this.state;
         
         return (
             <div>
@@ -121,7 +137,7 @@ class Pathfinder extends React.Component {
                         return (
                             <div key={rowIdx}>
                                 {row.map((node, nodeIdx) => {
-                                    const {row, col, isStart, isFinish } = node;
+                                    const {row, col, isStart, isFinish, isWall } = node;
                                     return (
                                         <Node 
                                             key={nodeIdx}
@@ -130,6 +146,11 @@ class Pathfinder extends React.Component {
                                             isFinish={isFinish}
                                             isStart={isStart}
                                             // isVisited={isVisited}
+                                            isWall={isWall}
+                                            mouseIsPressed={mouseIsPressed}
+                                            onMouseDown={(row, col) => this.handleMouseDown(row, col)}
+                                            onMouseEnter={(row, col) => this.handleMouseEnter(row, col)}
+                                            onMouseUp={() => this.handleMouseUp()}
                                         >
                                         </Node>
                                     )
