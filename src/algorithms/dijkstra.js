@@ -64,3 +64,55 @@ export function getNodesInShortestPathOrder(finishNode) {
     }
     return nodesInShortestPathOrder;
 }
+
+////////// dijkstra ////////
+function dijkstras(graph, source) {
+    // distance, represents the smallest distance between the source and every node calculated
+    let distance = {};
+
+    // initialize all nodes to be Infinity distance form source
+    for (let node in graph) {
+        distance[node] = Infinity;
+    }
+
+    // the source is 0 distance from itself
+    distance[source] = 0;
+
+    // initialize all nodes to be unvisited
+    let unvisited = new Set(Object.keys(graph));
+
+    // prepare an object to trak optimal paths
+    let previous = {};
+
+    // while some nodes are unvisited
+    while (unvisited.size > 0) {
+        // find the closest unvisited node
+        let currNode = minDistanceNode(unvisited, distance); // helper function to find unvisted node with shortest distance
+        // mark as visited
+        unvisited.delete(currNode);
+
+        // consider all neighbors of current node
+        for (let neighbor in graph[currNode]) {
+            // calculate total distance of the neighbor
+            // if we travel through currentnode to get to neighbor
+            let distanceFromCurrToNeighbor = graph[currNode][neighbor];
+            let totalNeighborDistance = distance[currNode] + distanceFromCurrToNeighbor;
+
+            // if total distance is better than the old distance we calculated for neighbor
+            if (distance[neighbor] > totalNeighborDistance) {
+                // then replace it
+                distance[neighbor] = totalNeighborDistance;
+                // and now say that optimal path has 'currNode' followed by 'neighbor'
+                previous[neighbor] = currNode;
+            }
+        }
+    }
+    return { distance, previous };
+};
+
+// helper method for finding the unvisited node with shorted distance
+function minDistanceNode(nodes, distance) {
+    return Array.from(nodes).reduce((minNode, node) => (
+        distance[node] < distance[minNode] ? node : minNode
+    ));
+};
